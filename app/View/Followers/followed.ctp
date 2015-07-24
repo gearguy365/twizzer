@@ -107,9 +107,9 @@
 			if(!empty($followees)){
 				foreach ($followees as $user) : 
 
-					$formatted_text;
+					$formatted_text='';
 					//$latest_tweet_time;
-					$formatted_time;
+					$formatted_time='';
 					foreach($tweets as $tweet):
 						if($tweet['Tweet']['user_id']==$user['User']['id']){
 							$formatted_text=$tweet['Tweet']['tweet'];
