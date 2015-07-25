@@ -24,6 +24,10 @@
 		#follow_button{
 			float: right;
 		}
+
+		#delete{
+			float: right;
+		}
 		
 		th, td {
 		    padding: 5px;
@@ -86,9 +90,14 @@
 		$formatted_text=$this->Text->autoLinkUrls($user['tweet']);
 		echo'<tr>';
 
-		echo '<td>'.
-		     $this->HTML->link($username['User']['username'], array('controller'=>'tweets','action'=>'profile',$username['User']['id'])).'&nbsp;'.$formatted_text.'<br>'.'posted at '.'<font color="blue">'.$user['datetime'].'</font>'
-		     .'</td>';
+		echo '<td>';
+		echo $this->HTML->link($username['User']['username'], array('controller'=>'tweets','action'=>'profile',$username['User']['id'])).'&nbsp;'.$formatted_text.'<br>'.'posted at '.'<font color="blue">'.$user['datetime'].'</font>';
+		if($username['User']['id']==AuthComponent::user('id')){
+			echo '<div id="delete">';
+			echo $this->Form->postlink('Delete',array('controller'=>'tweets','action'=>'delete',$user['id']),array('confirm'=>'Do you really want to delete this tweet?'));
+			echo '</div>';
+		}
+	    echo '</td>';
 		     
 		echo '</tr>';
 	endforeach;

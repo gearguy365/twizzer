@@ -18,6 +18,13 @@
 			}
 		}
 
+		public function delete($id){
+			$this->Tweet->id=$id;
+			$this->Tweet->delete();
+			$this->Session->setFlash(__("Tweet successfully deleted"));
+			return $this->redirect(array('controller'=>'users','action'=>'newsfeed'));
+		}
+
 		//profile action: displays the profile of a particular user given the user id
 		public function profile($id){
 			$this->loadModel('User');

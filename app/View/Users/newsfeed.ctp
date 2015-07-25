@@ -35,6 +35,10 @@
 		    border-radius: 5px;
 		}
 
+		#delete{
+			float: right;
+		}
+
 		th, td {
 		    padding: 5px;
 		    text-align: left;
@@ -45,6 +49,7 @@
 		table#t01 tr:nth-child(odd) {
 		   background-color:#fff;
 		}
+
 
 
 	</style>
@@ -114,9 +119,15 @@
 				echo '<table id="t01">';
 				echo'<tr>';
 
-				echo '<td>'.
-				     $user['User']['name'].'@'.$this->HTML->link($user['User']['username'], array('controller'=>'tweets','action'=>'profile',$user['User']['id'])).'<br>'.$formatted_text.'&nbsp;'.'<br>'.'<font color="blue">'.$formatted_time.'</font>'
-				     .'</td>';
+				echo '<td>';
+				echo $user['User']['name'].'@'.$this->HTML->link($user['User']['username'], array('controller'=>'tweets','action'=>'profile',$user['User']['id'])).'<br>'.$formatted_text.'&nbsp;'.'<br>'.'<font color="blue">'.$formatted_time.'</font>';
+				if($user['User']['id']==AuthComponent::user('id')){
+					echo '<div id="delete">';
+					echo $this->Form->postlink('Delete',array('controller'=>'tweets','action'=>'delete',$user['Tweet']['id']),array('confirm'=>'Do you really want to delete this tweet?'));
+					echo '</div>';
+				}
+
+				echo '</td>';
 
 				echo '</tr>';
 
