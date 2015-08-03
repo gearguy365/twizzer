@@ -9,6 +9,8 @@
 			margin-top: 5px;
 			background-repeat: no-repeat;
 			background-size: 1325px 520px;
+			max-width:100%;
+			max-height:100%;
 		}
 	</style>
 

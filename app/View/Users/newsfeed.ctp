@@ -136,7 +136,7 @@
 			echo'</table>';
 		}
 		else{
-			echo '<font color="red"> No results found </font>';
+			echo '<font color="grey"> Recents tweets made by you and your friends will appear here </font>';
 		}
 		echo '</div>';
 	}

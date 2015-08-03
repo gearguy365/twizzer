@@ -56,6 +56,7 @@
 			else if($this->request->is('post')){
 				$this->User->create();
 				$this->request->data['User']['password']=AuthComponent::password($this->request->data['User']['password']);
+				$this->request->data['User']['datetime']=date("Y-m-d H:i:s");
 				if($this->User->save($this->request->data)){
 					$this->Session->setFlash(__("Registration Successful!"));
 					return $this->redirect(array('action'=>'login'));
@@ -126,7 +127,7 @@
 				$search_name=$this->request->data['User']['search'];
 				$this->set('search_name',$search_name);
 
-				$search_result=$this->User->find('all',array('conditions'=>array('User.name LIKE'=>'%'.$search_name.'%')));
+				$search_result=$this->User->find('all',array('conditions'=>array('User.name LIKE'=>'%'.$search_name.'%',),'order' => array('User.datetime' => 'desc')));
 				$this->set('search_result',$search_result);
 			}
 		}
