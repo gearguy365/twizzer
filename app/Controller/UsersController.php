@@ -2,7 +2,8 @@
 	
 	class UsersController extends AppController{
 
-		public $components=array('Session','Paginator');
+		public $helpers=array('Js');
+		public $components=array('Session','Paginator','RequestHandler');
 		public $paginate=array(
 			'limit'=>10
 			);
@@ -70,34 +71,30 @@
 			}
 		}
 
-
-		//tweet action: Utilizes Tweet model to register a new tweet 
-		//on the Tweet table on behalf of the logged in user.
-		public function tweet(){
-			
-			$this->loadModel('Tweet');
-			if($this->request->is('post')){
-				$this->Tweet->create();
-				$this->request->data['Tweet']['user_id']=AuthComponent::user('id');
-				$this->request->data['Tweet']['tweet']=$this->request->data['User']['tweet'];
-				$this->request->data['Tweet']['datetime']=date("Y-m-d H:i:s");
-				if($this->Tweet->save($this->request->data)){
-					$this->Session->setFlash(__("Tweeting Successful!", 'element_name', array('class'=>'error'), 'location_key'));
-					return $this->redirect(array('controller'=>'users', 'action'=>'newsfeed'));
-				}
-				else{
-					$this->Session->setFlash(__("Twizzing Failed, Try again"));
-				}
-			}
-		}
-
-
-		//newsfeed action: Responsible for tweeting from homepage and populating the homepage 
-		//with followed people and user's own tweets
+		//newsfeed action: Responsible for populating various fields on the homepage and post tweets dynamically
 		public function newsfeed(){
 			$this->loadModel('Tweet');
 			$this->loadModel('Follower');
 			$id=AuthComponent::user('id');
+
+			if(!empty($this->data)){
+				
+				$this->request->data['Tweet']['user_id']=$id;
+				$this->request->data['Tweet']['datetime']=date("Y-m-d H:i:s");
+				if($this->Tweet->save($this->data)){
+					if($this->RequestHandler->isAjax()){
+						$this->set('data',$this->data);
+						$this->render('success','ajax');
+					}
+					else{
+						$this->Session->setFlash(_("Tweeting Successful!"));
+						return $this->redirect(array('controller'=>'users', 'action'=>'newsfeed'));
+					}
+				}
+				else{
+					$this->Session->setFlash(_("Tweeting Failed, Try again"));
+				}
+			}
 
 			$data=$this->User->findById($id);
 			$this->set('user_details',$data);
@@ -110,8 +107,6 @@
 				array_push($followers_id,$result['Follower']['followee_user_id']);
 			endforeach;
 
-			//$feed=$this->Tweet->find('all', array('conditions'=>array('Tweet.user_id'=>$followers_id)));
-			//$this->set('feed',$feed);
 			$this->Paginator->settings = array(
 		        'conditions' => array('Tweet.user_id' => $followers_id),
 		        'limit' => 10

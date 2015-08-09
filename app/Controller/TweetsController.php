@@ -18,6 +18,7 @@
 			}
 		}
 
+		//deletes tweets of a logged in user
 		public function delete($id){
 			$this->Tweet->id=$id;
 			$this->Tweet->delete();
