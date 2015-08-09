@@ -1,34 +1,3 @@
-	<style>
-		#login {
-		    line-height:30px;
-		    background-color:#eeeeee;
-		    width:700px;
-		    float:left;
-		    padding:5px;	
-		    margin-top:10px;      
-		}
-
-		#inner {
-		    line-height:30px;
-		    background-color:#eeeeee;
-		    width:500px;
-		    float:left;
-		    padding:0px;	
-		    margin-top:10px;      
-		}
-
-		#reg {
-			line-height: 30px;
-			background-color: #B3C9C7;
-			width: 400px;
-			height: 253px;
-			float: left;
-			margin-top: 10px;
-			padding-left: 15px;
-			padding-top: 30px;
-		}
-	</style>
-	
 <?php
 	include 'header.ctp';
 

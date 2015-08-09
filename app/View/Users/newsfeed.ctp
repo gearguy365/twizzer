@@ -1,58 +1,3 @@
-	<style>
-		#tweet {
-		    line-height:20px;
-		    background-color:#FFFFFF;
-		    width:698px;
-		    float:left;
-		    padding:5px;	
-		    margin-top:10px;  
-		    border: 1px solid black;  
-		    border-radius: 5px;
-		}
-
-		#feed {
-			float: left;
-			line-height:30px;
-		    background-color:#eeeeee;
-		    width:701px;
-		    padding:5px;	
-		    margin-top:20px; 
-		    clear:both;
-		    border-radius: 5px;
-		}
-
-		#sidebar{
-			text-align:center;
-			line-height:30px;
-		    background-color:#B3C9C7;
-		    width:300px;
-		    height: 150px;
-		    float: right;
-		    padding: 5px;	
-		    margin-top: 10px;  
-		    margin-right: 30px;
-		    border: 1px solid black;  
-		    border-radius: 5px;
-		}
-
-		#delete{
-			float: right;
-		}
-
-		th, td {
-		    padding: 5px;
-		    text-align: left;
-		}
-		table#t01 tr:nth-child(even) {
-		    background-color: #eee;
-		}
-		table#t01 tr:nth-child(odd) {
-		   background-color:#fff;
-		}
-
-
-
-	</style>
 <?php
 	include 'header.ctp';
 	
@@ -132,8 +77,8 @@
 				echo '</tr>';
 
 			endforeach;
-
 			echo'</table>';
+			echo 'Pages: '.$this->Paginator->numbers();
 		}
 		else{
 			echo '<font color="grey"> Recents tweets made by you and your friends will appear here </font>';

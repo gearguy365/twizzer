@@ -2,7 +2,10 @@
 	
 	class UsersController extends AppController{
 
-		public $components=array('Session');
+		public $components=array('Session','Paginator');
+		public $paginate=array(
+			'limit'=>10
+			);
 
 		//Unlocked pages before login
 		public function beforeFilter(){
@@ -107,9 +110,15 @@
 				array_push($followers_id,$result['Follower']['followee_user_id']);
 			endforeach;
 
-			$feed=$this->Tweet->find('all', array('conditions'=>array('Tweet.user_id'=>$followers_id)));
-			$this->set('feed',$feed);
-			
+			//$feed=$this->Tweet->find('all', array('conditions'=>array('Tweet.user_id'=>$followers_id)));
+			//$this->set('feed',$feed);
+			$this->Paginator->settings = array(
+		        'conditions' => array('Tweet.user_id' => $followers_id),
+		        'limit' => 10
+		    );
+		    $feed = $this->Paginator->paginate('Tweet');
+		    $this->set('feed',$feed);
+
 			$tweet_count = $this->Tweet->find('count', array('conditions' => array('Tweet.user_id' => $id)));
 			$this->set('tweet_count',$tweet_count);
 			
