@@ -147,4 +147,14 @@ class User extends AppModel {
 		)
 	);
 
+	public function checkUsername($username){
+		$result = $this->find('first', array('conditions' => array('username' => $username)));
+		if($result!=null){
+			return false;
+		}
+		else{
+			return true;
+		}
+
+	}
 }

@@ -7,6 +7,7 @@ App::uses('AppModel', 'Model');
  */
 class Follower extends AppModel {
 
+	public $components=array('Paginator');
 /**
  * Display field
  *
@@ -58,4 +59,40 @@ class Follower extends AppModel {
 			'order' => ''
 		)
 	);
+
+	public function getFollowingCount($id){
+		$following_count = $this->find('count', array('conditions' => array('follower_user_id' => $id)));
+		return $following_count;
+	}
+
+	public function getFollowerCount($id){
+		$follower_count=$this->find('count', array('conditions' => array('followee_user_id' => $id)));
+		return $follower_count;
+	}
+
+	public function getFolloweeidList($id){
+		$followees=$this->find('all',array('conditions' => array('follower_user_id' => $id)));
+		$followees_id=array();
+		//array_push($followees_id,$id);
+
+		foreach ($followees as $result):
+			array_push($followees_id, $result['Follower']['followee_user_id']);
+		endforeach;
+		return $followees_id;
+	}
+
+	public function getFolloweridList($id){
+		$followers=$this->find('all',array('conditions'=> array('followee_user_id'=>$id)));
+		$followers_id=array();
+		
+		foreach ($followers as $result):
+			array_push($followers_id, $result['Follower']['follower_user_id']);
+		endforeach;	
+		return $followers_id;
+	}
+
+	public function getFolloweeList($id){
+		$search_result=$this->find('all',array('conditions'=>array('follower_user_id'=>$id)));
+		return $search_result;
+	}
 }

@@ -68,4 +68,9 @@ class Tweet extends AppModel {
 			'order' => array('Tweet.datetime DESC')
 		)
 	);
+
+	public function getTweetCount($id){
+		$tweet_count = $this->find('count', array('conditions' => array('user_id' => $id)));
+		return $tweet_count;
+	}
 }
