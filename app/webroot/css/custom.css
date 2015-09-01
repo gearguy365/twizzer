@@ -80,6 +80,7 @@
 		    margin-top:20px; 
 		    clear:both;
 		    border-radius: 5px;
+		    word-wrap: break-word;
 		}
 
 		#sidebar{
@@ -100,9 +101,14 @@
 			float: right;
 		}
 
+		table {
+			table-layout:fixed;
+		}
+
 		th, td {
 		    padding: 5px;
 		    text-align: left;
+		    word-wrap: break-word;
 		}
 
 		table#t01 tr:nth-child(even) {
@@ -162,19 +168,6 @@
 
 		#delete{
 			float: right;
-		}
-		
-		th, td {
-		    padding: 5px;
-		    text-align: left;
-		}
-
-		table#t01 tr:nth-child(even) {
-		    background-color: #eee;
-		}
-		
-		table#t01 tr:nth-child(odd) {
-		   background-color:#fff;
 		}
 
 		#feed {
