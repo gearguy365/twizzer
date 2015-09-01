@@ -1,47 +1,81 @@
 <?php
+	include 'header.ctp';
+?>
 
-include 'header.ctp';
+<div id="user_info">
+	<p><?php echo 'You are being followed by '.$follower_count.' followers';?></p>
+</div>
 
-echo '<div id="user_info">';
-echo 'You are being followed by '.$user_count.' people';
-echo '</div>';
-		
-if(isset($people)){
-	echo '<div id="tweet_records">';			
-	
-	if(!empty($people)){
 
-		foreach ($people as $person) : 
+<div id="sidebar">
+<?php include 'sidebar.ctp';?>
+</div>
 
-			if(!empty($person['Tweet'])){
-				$latest_tweet=$person['Tweet'][0]['tweet'];
-				$tweeting_time=$person['Tweet'][0]['datetime'];
+
+<div id="tweet_records">			
+
+<?php	
+	foreach ($followers as $person) :
+		$latest_tweet='';
+		$tweeting_time=''; 
+		$user_name=$person['User']['name'];
+		$user_username=$person['User']['username'];
+		$user_id=$person['User']['id'];
+
+		if(!empty($person['Tweet'])){
+			$latest_tweet=$person['Tweet'][0]['tweet'];
+			$tweeting_time=$person['Tweet'][0]['datetime'];
+		}
+		else{
+			$latest_tweet='No tweets yet';
+			$tweeting_time='';
+		}
+?>
+<table id="t01">
+	<tr>
+		<td>
+		<?php
+			echo $user_name.'@'.$this->HTML->link($user_username, array('controller'=>'tweets','action'=>'profile',$user_id));
+			echo '<br>';
+			echo $latest_tweet.'&nbsp;';
+			echo '<br>';
+			echo '<font color="blue">'.$tweeting_time.'</font>';
+		?>
+		<div id="delete">
+		<?php
+			$selector='true';
+
+			foreach ($person['Follower'] as $follower) :
+				if($follower['follower_user_id']==AuthComponent::user('id')){
+					$selector='false';
+					echo $this->Form->postlink('Unfollow',
+						array(
+							'controller'=>'followers',
+							'action'=>'unfollow',
+							$follower['id']),
+						array(
+							'confirm'=>'Do you really want to unfollow this person?')
+						);
+				}
+			endforeach;
+
+			if($selector=='true' & $person['User']['id']!=AuthComponent::user('id')){
+				echo $this->Form->postlink('Follow',
+					array(
+						'controller'=>'followers',
+						'action'=>'follow',
+						$person['User']['id'])
+					);
 			}
-			else{
-				$latest_tweet='No tweets yet';
-				$tweeting_time='';
-			}
+		?>
+		</div>
+		</td>
+	</tr>
 
-			$user_name=$person['User']['name'];
-			$user_username=$person['User']['username'];
-			$user_id=$person['User']['id'];
+	<?php endforeach;?>
 
-			echo '<table id="t01">';
-			echo'<tr>';
-				echo '<td>'.
-					$user_name.'@'.$this->HTML->link($user_username, array('controller'=>'tweets','action'=>'profile',$user_id)).'<br>'.$latest_tweet.'&nbsp;'.'<br>'.'<font color="blue">'.$tweeting_time.'</font>'
-					.'</td>';
-			echo '</tr>';
+</table>
 
-		endforeach;
+<?php include 'pagination.ctp';?>
 
-		echo'</table>';
-	}
-
-	else{
-		echo '<font color="red"> No results found </font>';
-	}
-
-	echo '</div>';
-
-}
+</div>

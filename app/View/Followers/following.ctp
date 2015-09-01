@@ -1,15 +1,18 @@
 <?php
+	include 'header.ctp';
+?>
 
-include 'header.ctp';
+<div id="user_info">
+	<p><?php echo 'You are following '.$following_count.' people';?></p>
+</div>
 
-echo '<div id="user_info">';
-echo 'You are following '.$user_count.' people';
-echo '</div>';
+<div id="sidebar">
+<?php include 'sidebar.ctp';?>
+</div>
 
-if(isset($followees)){
+<div id="tweet_records">
 
-	echo '<div id="tweet_records">';
-			
+<?php
 	if(!empty($followees)){
 		foreach ($followees as $user) : 
 
@@ -24,22 +27,48 @@ if(isset($followees)){
 					break;
 				}
 			endforeach;
-
-			echo '<table id="t01">';
+?>
+	<table id="t01">
 			
-				echo'<tr>';
-					echo '<td>'.
-					     $user['User']['name'].'@'.$this->HTML->link($user['User']['username'], array('controller'=>'tweets','action'=>'profile',$user['User']['id'])).'<br>'.$formatted_text.'&nbsp;'.'<br>'.'<font color="blue">'.$formatted_time.'</font>'
-						.'</td>';
-				echo '</tr>';
-		endforeach;
+		<tr>
+			<td>
+				<?php
+					echo $user['User']['name'].'@'.$this->HTML->link($user['User']['username'], 
+						array(
+							'controller'=>'tweets',
+							'action'=>'profile',
+							$user['User']['id']));
+					echo '<br>';
+					echo $formatted_text.'&nbsp;';
+					echo '<br>';
+					echo '<font color="blue">'.$formatted_time.'</font>';
+				?>
+				<div id="delete">
+				<?php
+					echo $this->Form->postlink('Unfollow',
+						array(
+							'controller'=>'followers',
+							'action'=>'unfollow',
+							$user['Follower']['id']),
+						array(
+							'confirm'=>'Do you really want to unfollow this person?')
+						);
+				?>
+				</div>
+			</td>
+		</tr>
 
-		echo'</table>';
-	}
+		<?php endforeach;?>
 
-	else{
-		echo '<font color="red"> No results found </font>';
-	}
+	</table>
+	<?php include 'pagination.ctp';?>
+	
+	<?php 
+		}
 
-	echo '</div>';
-}
+		else{
+			echo '<font color="red"> No results found </font>';
+		}
+	?>
+
+</div>
