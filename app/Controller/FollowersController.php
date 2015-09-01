@@ -2,7 +2,10 @@
 
 	class FollowersController extends AppController{
 
-		public $components=array('Session');
+		public $components=array('Session','Paginator');
+		public $paginate=array(
+			'limit'=>10
+			);
 
 		//follow action: creates a following relationship among two users
 		public function follow($followee_id){
@@ -10,8 +13,8 @@
 			$this->Follower->create();
 			$follow=Array(
 			    "Follower" => Array(
-			            "follower_user_id" => $follower_id,
-			            "followee_user_id" => $followee_id
+			        "follower_user_id" => $follower_id,
+			        "followee_user_id" => $followee_id
 			    ));
 			if($this->Follower->save($follow)){
 				$this->Session->setFlash(__("You are now following this person!"));
@@ -25,45 +28,48 @@
 		public function unfollow($id){
 			$this->Follower->id=$id;
 			$this->Follower->delete();
+			$this->Session->setFlash(__("Unfollow successful!"));
 			return $this->redirect(array('controller'=>'users','action'=>'newsfeed'));
 		}
 
 
 		//follower action: loads a list of people that are following a particular logged on user
 		public function follower(){
+			$id=AuthComponent::user('id');
 			$this->loadModel('User');
-			$search_result=$this->Follower->find('all',array('conditions'=>array('Follower.followee_user_id'=>AuthComponent::user('id'))));
-			$people=array();
-			$this->set('data',$search_result);
+			$this->loadModel('Tweet');
 
-			foreach ($search_result as $result):
-				array_push($people,$result['Follower']['follower_user_id']);
-			endforeach;		
+			$this->Paginator->settings = array(
+		        'conditions'=>array('User.id'=>$this->Follower->getFolloweridList($id)),
+		        'limit' => 10
+		    );
+		    $feed = $this->Paginator->paginate('User');
+		    $this->set('followers',$feed);
 
-			$people_result=$this->User->find('all',array('conditions'=>array('User.id'=>$people)));
-			$this->set('people',$people_result);
-
-			$user_count=$this->Follower->find('count',array('conditions'=>array('Follower.followee_user_id'=>AuthComponent::user('id'))));
-			$this->set('user_count',$user_count);
-
+			$this->setSidebarData($id);
 		}
 
 		//following action: loads a list of people that a particular user is following
 		public function following(){
+			$id=AuthComponent::user('id');
 			$this->loadModel('Tweet');
-			$search_result;
-			$people=array();
 
-			$search_result=$this->Follower->find('all',array('conditions'=>array('Follower.follower_user_id'=>AuthComponent::user('id'))));
-				$this->set('followees',$search_result);
+			$this->Paginator->settings = array(
+		        'conditions'=>array('Follower.follower_user_id'=>AuthComponent::user('id')),
+		        'limit' => 10
+		    );
+		    $feed = $this->Paginator->paginate('Follower');
+		    $this->set('followees',$feed);
 
-				foreach ($search_result as $result):
-					array_push($people,$result['Follower']['followee_user_id']);
-				endforeach;
+			$tweet_result=$this->Tweet->find('all',array('conditions'=>array('Tweet.user_id'=>$this->Follower->getFolloweeidList($id))));
+			$this->set('tweets',$tweet_result);
 
-				$tweet_result=$this->Tweet->find('all',array('conditions'=>array('Tweet.user_id'=>$people)));
-				$user_count=$this->Follower->find('count',array('conditions'=>array('Follower.follower_user_id'=>AuthComponent::user('id'))));
-				$this->set('user_count',$user_count);	
-			    $this->set('tweets',$tweet_result);
+			$this->setSidebarData($id);
+		}
+
+		public function setSidebarData($id){
+			$this->set('tweet_count', $this->Tweet->getTweetCount($id));
+			$this->set('following_count', $this->Follower->getFollowingCount($id));
+			$this->set('follower_count',$this->Follower->getFollowerCount($id));
 		}
 }
