@@ -1,5 +1,4 @@
 <?php
 	include 'header.ctp';
-	?>
-	<div id="banner">
-	</div>
+?>
+<div id="banner"></div>

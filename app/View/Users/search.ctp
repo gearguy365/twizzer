@@ -1,25 +1,34 @@
-<?php
+<?php 
 	include 'header.ctp';
-	echo '<div id="feed">';
+?>
+
+<div id="feed">
+<?php
 	echo $this->Form->create(null, array('url' => array('controller' => 'users', 'action' => 'search')));
 	echo $this->Form->input('search');
 	echo $this->Form->end('Search');
-	echo 'search by name';
-	echo '</div>';
+    echo 'search by name';
+?>
+</div>
 
-	if(isset($search_result)){
-		echo '<div id="tweet_records">';
-		
+<div id="tweet_records">
+
+<?php 
+	if(isset($search_result)){ 
 		if(!empty($search_result)){
 
 			foreach ($search_result as $user) : 
 
-				$formatted_text;
+				$formatted_tweet;
 				$latest_tweet_time;
 				$formatted_time;
+				$name= $user['User']['name'];
+				$username= $user['User']['username'];
+				$id=$user['User']['id'];
+
 
 				if(!empty($user['Tweet'])){
-					$formatted_text=$this->Text->autoLinkUrls($user['Tweet']['0']['tweet']);
+					$formatted_tweet=$this->Text->autoLinkUrls($user['Tweet']['0']['tweet']);
 					$latest_tweet_time=$user['Tweet']['0']['datetime'];
 					$formatted_time;
 					if(strlen($latest_tweet_time)!=0){
@@ -30,23 +39,51 @@
 					}
 				}
 				else if(empty($user['Tweet'])){
-					$formatted_text='No tweets yet';
+					$formatted_tweet='No tweets yet';
 					$formatted_time='';		
 				}
-				echo '<table id="t01">';
-				echo'<tr>';
+?>
 
-				echo '<td>'.
-				     $user['User']['name'].'@'.$this->HTML->link($user['User']['username'], array('controller'=>'tweets','action'=>'profile',$user['User']['id'])).'<br>'.$formatted_text.'&nbsp;'.'<br>'.'<font color="blue">'.$formatted_time.'</font>'
-				     .'</td>';
+<table id="t01">
+	<tr>
+		<td>
+		<?php
+		    echo $name.'@'.$this->HTML->link($username, array('controller'=>'tweets','action'=>'profile',$id)).'<br>';
+		    echo $formatted_tweet.'&nbsp;'.'<br>';
+		    echo '<font color="blue">'.$formatted_time.'</font>';
+		?>
 
-				echo '</tr>';
+		<div id="delete">
+		<?php
+			$selector='true';
+
+			foreach ($user['Follower'] as $follower) :
+				if($follower['follower_user_id']==AuthComponent::user('id')){
+					$selector='false';
+					echo $this->Form->postlink('Unfollow',array('controller'=>'followers','action'=>'unfollow',$user['User']['id']),array('confirm'=>'Do you really want to unfollow this person?'));
+				}
 			endforeach;
+
+			if($selector=='true' & $user['User']['id']!=AuthComponent::user('id')){
+				echo $this->Form->postlink('Follow',array('controller'=>'followers','action'=>'follow',$user['User']['id']));
+			}
+		?>
+		</div>
+
+		</td>
+	</tr>
+			<?php endforeach;?>		
+</table>
 			
-			echo'</table>';
+	<?php
+		include 'pagination.ctp';
+	?>
+	
+	<?php		
+			}
+			else{
+				echo '<font color="red"> No results found </font>';
+			}
 		}
-		else{
-			echo '<font color="red"> No results found </font>';
-		}
-		echo '</div>';
-	}
+	?>
+</div>
